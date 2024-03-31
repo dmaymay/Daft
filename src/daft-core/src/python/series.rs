@@ -129,6 +129,10 @@ impl PySeries {
         Ok(self.series.round(decimal)?.into())
     }
 
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> PyResult<Self> {
+        Ok(self.series.clip(lower, upper)?.into())
+    }
+
     pub fn take(&self, idx: &Self) -> PyResult<Self> {
         Ok(self.series.take(&idx.series)?.into())
     }

@@ -968,7 +968,7 @@ class DataFrame:
         return self.where(
             ~reduce(
                 lambda x, y: x.is_null().if_else(lit(False), x) | y.is_null().if_else(lit(False), y),
-                (x.float.is_nan() for x in float_columns),
+                (x.float_expr.is_nan() for x in float_columns),
             )
         )
 

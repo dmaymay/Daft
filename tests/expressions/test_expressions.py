@@ -123,6 +123,15 @@ def test_repr_functions_round() -> None:
     assert repr_out == repr(copied)
 
 
+def test_repr_functions_clip() -> None:
+    a = col("a")
+    y = a.clip()
+    repr_out = repr(y)
+    assert repr_out == "clip(col(a))"
+    copied = copy.deepcopy(y)
+    assert repr_out == repr(copied)
+
+
 def test_repr_functions_day() -> None:
     a = col("a")
     y = a.dt.day()

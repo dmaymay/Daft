@@ -50,6 +50,7 @@ Numeric
     Expression.floor
     Expression.sign
     Expression.round
+    Expression.clip
 
 .. _api-comparison-expression:
 

@@ -266,3 +266,28 @@ def test_table_round_bad_input() -> None:
 
     with pytest.raises(ValueError, match="decimal can not be negative: -2"):
         table.eval_expression_list([col("a").round(-2)])
+
+
+def test_table_numeric_clip() -> None:
+    table = MicroPartition.from_pydict(
+        {"a": [None, -2, -1, 0, 1, 2, None], "b": [-2.5, float("nan"), -0.5, 0.5, 1.5, 2.5, None]}
+    )
+    clip_table = table.eval_expression_list([col("a").clip(0, 1), col("b").clip(-1.0, 1.0)])
+    assert [
+        max(min(v, 1), 0) if v is not None else v for v in table.get_column("a").to_pylist()
+    ] == clip_table.get_column("a").to_pylist()
+    assert [
+        max(min(v, 1.0), -1.0) if v is not None else v for v in table.get_column("b").to_pylist()
+    ] == clip_table.get_column("b").to_pylist()
+
+
+def test_table_clip_bad_input() -> None:
+    table = MicroPartition.from_pydict({"a": ["a", "b", "c"]})
+
+    with pytest.raises(ValueError, match="Expected input to clip to be numeric"):
+        table.eval_expression_list([col("a").clip(-1, 1)])
+
+    table = MicroPartition.from_pydict({"a": [1, 2, 3]})
+
+    with pytest.raises(ValueError, match="Clip lower bound must be less than or equal to upper bound"):
+        table.eval_expression_list([col("a").clip(2, -2)])

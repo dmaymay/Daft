@@ -367,6 +367,9 @@ class Series:
     def round(self, decimal: int) -> Series:
         return Series._from_pyseries(self._series.round(decimal))
 
+    def clip(self, lower: float | None = None, upper: float | None = None) -> Series:
+        return Series._from_pyseries(self._series.clip(lower, upper))
+
     def __add__(self, other: object) -> Series:
         if not isinstance(other, Series):
             raise TypeError(f"expected another Series but got {type(other)}")

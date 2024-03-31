@@ -131,7 +131,7 @@ class Expression:
         return ExpressionDatetimeNamespace.from_expression(self)
 
     @accessor_namespace_property
-    def float(self) -> ExpressionFloatNamespace:
+    def float_expr(self) -> ExpressionFloatNamespace:
         """Access methods that work on columns of floats"""
         return ExpressionFloatNamespace.from_expression(self)
 
@@ -355,6 +355,16 @@ class Expression:
         """
         assert isinstance(decimals, int)
         expr = self._expr.round(decimals)
+        return Expression._from_pyexpr(expr)
+
+    def clip(self, lower: float | None = None, upper: float | None = None) -> Expression:
+        """Clip values of a numeric expression within the bounds of lower and upper (`expr.clip(lower, upper)`).
+
+        Args:
+            lower: The lower bound to clip to. Defaults to None.
+            upper: The upper bound to clip to. Defaults to None.
+        """
+        expr = self._expr.clip(lower, upper)
         return Expression._from_pyexpr(expr)
 
     def count(self, mode: CountMode = CountMode.Valid) -> Expression:

@@ -225,6 +225,11 @@ impl PyExpr {
         Ok(round(&self.expr, decimal).into())
     }
 
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> PyResult<Self> {
+        use functions::numeric::clip;
+        Ok(clip(&self.expr, lower, upper).into())
+    }
+
     pub fn if_else(&self, if_true: &Self, if_false: &Self) -> PyResult<Self> {
         Ok(self.expr.if_else(&if_true.expr, &if_false.expr).into())
     }
