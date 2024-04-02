@@ -1,32 +1,26 @@
 use crate::datatypes::{
-    Float32Array, Float64Array, Int128Array, Int16Array, Int32Array, Int64Array, Int8Array,
-    UInt16Array, UInt32Array, UInt64Array, UInt8Array,
+    DaftNumericType, Int128Array, Int16Array, Int32Array, Int64Array, Int8Array, UInt16Array,
+    UInt32Array, UInt64Array, UInt8Array,
 };
+
+use crate::{array::DataArray, datatypes::DaftFloatType};
+use num_traits::{Float, NumCast};
 
 use common_error::DaftResult;
 
-impl Float32Array {
+impl<T: DaftFloatType> DataArray<T>
+where
+    T: DaftNumericType,
+    T::Native: Float + NumCast,
+{
     pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
         self.apply(|v| {
             if v.is_nan() {
                 return v;
             }
-            let lower_bound = lower.unwrap_or(f32::MIN.into()) as f32;
-            let upper_bound = upper.unwrap_or(f32::MAX.into()) as f32;
-            v.max(lower_bound).min(upper_bound)
-        })
-    }
-}
-
-impl Float64Array {
-    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
-        self.apply(|v| {
-            if v.is_nan() {
-                return v;
-            }
-            let lower_bound = lower.unwrap_or(f64::MIN);
-            let upper_bound = upper.unwrap_or(f64::MAX);
-            v.max(lower_bound).min(upper_bound)
+            let lower_bound: Option<T::Native> = lower.and_then(NumCast::from);
+            let upper_bound: Option<T::Native> = upper.and_then(NumCast::from);
+            upper_bound.map_or(lower_bound.map_or(v, |lb| v.max(lb)), |ub| v.min(ub))
         })
     }
 }
