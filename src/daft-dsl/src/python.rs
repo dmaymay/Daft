@@ -226,6 +226,14 @@ impl PyExpr {
     }
 
     pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> PyResult<Self> {
+        if let (Some(lower_val), Some(upper_val)) = (lower, upper) {
+            if lower_val > upper_val {
+                return Err(PyValueError::new_err(format!(
+                    "lower bound must be equal or higher than upper bound. lower: {}, upper: {}",
+                    lower_val, upper_val
+                )));
+            }
+        }
         use functions::numeric::clip;
         Ok(clip(&self.expr, lower, upper).into())
     }

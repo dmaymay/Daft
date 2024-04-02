@@ -1,43 +1,122 @@
-use crate::{array::DataArray, datatypes::DaftNumericType};
+use crate::datatypes::{
+    Float32Array, Float64Array, Int128Array, Int16Array, Int32Array, Int64Array, Int8Array,
+    UInt16Array, UInt32Array, UInt64Array, UInt8Array,
+};
+
 use common_error::DaftResult;
-use num_traits::{FromPrimitive, ToPrimitive};
 
-impl<T: DaftNumericType> DataArray<T>
-where
-    T::Native: ToPrimitive + FromPrimitive,
-{
+impl Float32Array {
     pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
-        // Early check for bounds logic.
-        if let (Some(lower_bound), Some(upper_bound)) = (lower, upper) {
-            if lower_bound > upper_bound {
-                // If lower_bound is greater than upper_bound, set all values to upper_bound.
-                return self.apply(|_| FromPrimitive::from_f64(upper_bound).unwrap_or_default());
-            }
-        }
-
         self.apply(|v| {
-            // Convert v to f64 for comparison.
-            let v_as_f64 = v.to_f64().unwrap_or_default();
-
-            let clipped_value = if let Some(lower_bound) = lower {
-                if v_as_f64 < lower_bound {
-                    FromPrimitive::from_f64(lower_bound).unwrap_or(v)
-                } else {
-                    v
-                }
-            } else {
-                v
-            };
-
-            if let Some(upper_bound) = upper {
-                if v_as_f64 > upper_bound {
-                    FromPrimitive::from_f64(upper_bound).unwrap_or(clipped_value)
-                } else {
-                    clipped_value
-                }
-            } else {
-                clipped_value
+            if v.is_nan() {
+                return v;
             }
+            let lower_bound = lower.unwrap_or(f32::MIN.into()) as f32;
+            let upper_bound = upper.unwrap_or(f32::MAX.into()) as f32;
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl Float64Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            if v.is_nan() {
+                return v;
+            }
+            let lower_bound = lower.unwrap_or(f64::MIN);
+            let upper_bound = upper.unwrap_or(f64::MAX);
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl Int8Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            let lower_bound = lower.map_or(i8::MIN, |l| l as i8);
+            let upper_bound = upper.map_or(i8::MAX, |u| u as i8);
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl Int16Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            let lower_bound = lower.map_or(i16::MIN, |l| l as i16);
+            let upper_bound = upper.map_or(i16::MAX, |u| u as i16);
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl Int32Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            let lower_bound = lower.map_or(i32::MIN, |l| l as i32);
+            let upper_bound = upper.map_or(i32::MAX, |u| u as i32);
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl Int64Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            let lower_bound = lower.map_or(i64::MIN, |l| l as i64);
+            let upper_bound = upper.map_or(i64::MAX, |u| u as i64);
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl Int128Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            let lower_bound = lower.map_or(i128::MIN, |l| l as i128);
+            let upper_bound = upper.map_or(i128::MAX, |u| u as i128);
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl UInt8Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            let lower_bound = lower.map_or(u8::MIN, |l| l as u8);
+            let upper_bound = upper.map_or(u8::MAX, |u| u as u8);
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl UInt16Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            let lower_bound = lower.map_or(u16::MIN, |l| l as u16);
+            let upper_bound = upper.map_or(u16::MAX, |u| u as u16);
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl UInt32Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            let lower_bound = lower.map_or(u32::MIN, |l| l as u32);
+            let upper_bound = upper.map_or(u32::MAX, |u| u as u32);
+            v.max(lower_bound).min(upper_bound)
+        })
+    }
+}
+
+impl UInt64Array {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
+        self.apply(|v| {
+            let lower_bound = lower.map_or(u64::MIN, |l| l as u64);
+            let upper_bound = upper.map_or(u64::MAX, |u| u as u64);
+            v.max(lower_bound).min(upper_bound)
         })
     }
 }
