@@ -24,7 +24,7 @@ impl FunctionEvaluator for ClipEvaluator {
         let field = inputs.first().unwrap().to_field(schema)?;
         if !field.dtype.is_numeric() {
             return Err(DaftError::TypeError(format!(
-                "Expected input to round to be numeric, got {}",
+                "Expected input to clip to be numeric, got {}",
                 field.dtype
             )));
         }
