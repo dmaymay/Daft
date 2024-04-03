@@ -1,6 +1,6 @@
 use crate::datatypes::{
-    DaftNumericType, Int128Array, Int16Array, Int32Array, Int64Array, Int8Array, UInt16Array,
-    UInt32Array, UInt64Array, UInt8Array,
+    DaftNumericType, Int16Array, Int32Array, Int64Array, Int8Array, UInt16Array, UInt32Array,
+    UInt64Array, UInt8Array,
 };
 
 use crate::{array::DataArray, datatypes::DaftFloatType};
@@ -60,16 +60,6 @@ impl Int64Array {
         self.apply(|v| {
             let lower_bound = lower.map_or(i64::MIN, |l| l as i64);
             let upper_bound = upper.map_or(i64::MAX, |u| u as i64);
-            v.max(lower_bound).min(upper_bound)
-        })
-    }
-}
-
-impl Int128Array {
-    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Self> {
-        self.apply(|v| {
-            let lower_bound = lower.map_or(i128::MIN, |l| l as i128);
-            let upper_bound = upper.map_or(i128::MAX, |u| u as i128);
             v.max(lower_bound).min(upper_bound)
         })
     }
