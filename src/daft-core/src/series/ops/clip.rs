@@ -4,10 +4,7 @@ use common_error::DaftError;
 use common_error::DaftResult;
 
 impl Series {
-    pub fn clip<T>(&self, lower: Option<T>, upper: Option<T>) -> DaftResult<Series>
-    where
-        T: Into<f64> + Copy,
-    {
+    pub fn clip(&self, lower: Option<f64>, upper: Option<f64>) -> DaftResult<Series> {
         use crate::series::array_impl::IntoSeries;
         use DataType::*;
 
