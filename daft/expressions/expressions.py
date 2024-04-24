@@ -357,7 +357,7 @@ class Expression:
         expr = self._expr.round(decimals)
         return Expression._from_pyexpr(expr)
 
-    def clip(self, lower: float | None = None, upper: float | None = None) -> Expression:  # type: ignore [valid-type]
+    def clip(self, lower: int | float | None = None, upper: int | float | None = None) -> Expression:  # type: ignore [valid-type]
         """Clip values of a numeric expression within the bounds of lower and upper (`expr.clip(lower, upper)`).
 
         Args:
